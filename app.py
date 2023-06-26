@@ -1,43 +1,27 @@
 from flask import Flask, render_template, jsonify
+from database import carrega_vagas_db, carrega_vaga_db
 
 app = Flask(__name__)
-
-VAGAS = [{
-  'id': 1,
-  'titulo': 'Analista de Dados',
-  'localidade': 'RJ, Brasil',
-  'salario': 'R$ 5000.00'
-}, {
-  'id': 2,
-  'titulo': 'Dev FrontEnd',
-  'localidade': 'PR, Brasil',
-  'salario': 'R$ 3000.00'
-}, {
-  'id': 3,
-  'titulo': 'Cientista de Dados',
-  'localidade': 'SP, Brasil',
-  'salario': 'R$ 4000.00'
-}, {
-  'id': 4,
-  'titulo': 'Dev BackEnd',
-  'localidade': 'RJ, Brasil',
-  'salario': 'R$ 5500.00'
-}, {
-  'id': 5,
-  'titulo': 'Estatistico',
-  'localidade': 'SP, Brasil',
-  'salario': 'R$ 3400.00'
-}]
 
 
 @app.route('/')
 def page_home():
-  return render_template('home.html', vagas=VAGAS)
+  vagas = carrega_vagas_db()
+  return render_template('home.html', vagas=vagas)
 
 
 @app.route('/vagas')
 def lista_vagas():
-  return jsonify(VAGAS)
+  vagas = carrega_vagas_db()
+  return jsonify(vagas)
+
+
+@app.route('/vaga/<id>')
+def mostra_vaga(id):
+  vaga = carrega_vaga_db(id)
+  if not vaga:
+    return 'Not Found', 404
+  return render_template('detalhe_vaga.html', vaga=vaga)
 
 
 if __name__ == '__main__':
